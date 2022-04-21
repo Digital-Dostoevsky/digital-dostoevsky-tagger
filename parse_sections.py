@@ -61,9 +61,7 @@ def parse_sections(text):
                     if current.strip() and previous.strip():
                         break
 
-                section["prev_titles"] = {}
-                for title in prev_titles:
-                    section["prev_titles"][next(titles)] = title
+                section["prev_titles"] = dict(zip(titles, prev_titles))
 
     return sections
 
