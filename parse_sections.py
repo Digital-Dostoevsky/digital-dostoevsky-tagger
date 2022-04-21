@@ -1,3 +1,5 @@
+import logging
+
 TITLES = ["title", "subtitle", "part_title", "chapter_title", "maintitle"]
 
 
@@ -40,9 +42,11 @@ def parse_sections(text):
 
     for i, section in enumerate(sections):
         if section["numeral"] is not None:
+
+            prev_section = sections[i - 1]
             integer = roman_to_arabic(section["numeral"])
+
             if integer == 1:
-                prev_section = sections[i - 1]
                 prev_titles = []
                 titles = iter(reversed(TITLES))
 
@@ -73,6 +77,15 @@ def parse_sections(text):
                 section["prev_titles"] = reversed(
                     dict(zip(titles, prev_titles)).items()
                 )
+            else:
+                # sanity check -- consecutive roman numeral sections should have
+                #  consecutive roman numerals (unless they are section I)
+                if roman_to_arabic(prev_section["numeral"]) != integer - 1:
+                    logging.warning(
+                        "Section numbering is not correct "
+                        f"({prev_section['numeral']=}, {section['numeral']=})"
+                        f"\n\t - {section['lines'][1]}..."
+                    )
 
     return sections
 
