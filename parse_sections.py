@@ -25,6 +25,8 @@ def roman_to_arabic(s: str) -> int:
 def parse_sections(text):
     sections = []
     buffer = []
+    first_section = True
+    has_maintitle = True
 
     section_numeral = None
     for i, line in enumerate(text.splitlines()):
@@ -60,6 +62,13 @@ def parse_sections(text):
                     #  reached the bottom of the previous section's text
                     if current.strip() and previous.strip():
                         break
+
+                if first_section:
+                    first_section = False
+                    has_maintitle = len(prev_titles) == 5
+
+                if not has_maintitle:
+                    titles = reversed(TITLES[:-1])
 
                 section["prev_titles"] = dict(zip(titles, prev_titles))
 
