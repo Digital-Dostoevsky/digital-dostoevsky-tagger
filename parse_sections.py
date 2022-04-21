@@ -32,7 +32,7 @@ def parse_sections(text):
 
     section_numeral = None
     for i, line in enumerate(text.splitlines()):
-        line = line.strip(" \n")
+        line = line.strip(" \t\n")
         if is_roman_numeral(line):
             sections.append({"numeral": section_numeral, "lines": buffer})
             section_numeral = line
