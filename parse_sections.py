@@ -70,7 +70,9 @@ def parse_sections(text):
                 if not has_maintitle:
                     titles = reversed(TITLES[:-1])
 
-                section["prev_titles"] = dict(zip(titles, prev_titles))
+                section["prev_titles"] = reversed(
+                    dict(zip(titles, prev_titles)).items()
+                )
 
     return sections
 
@@ -85,10 +87,7 @@ def markup_sections(sections):
         else:
             if "prev_titles" in section:
                 buffer.extend(
-                    [
-                        f"<{key}>{val}</{key}>"
-                        for key, val in reversed(section["prev_titles"].items())
-                    ]
+                    [f"<{key}>{val}</{key}>" for key, val in section["prev_titles"]]
                 )
             integer = roman_to_arabic(section["numeral"])
             buffer.append(f'<div type="section" n="{integer}">')
