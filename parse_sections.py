@@ -72,7 +72,7 @@ def markup_sections(sections):
         if section["numeral"] is None:
             front_matter = "\n".join(section["lines"]).strip()
             if front_matter:
-                buffer.append(f"<front>{front_matter}</front>")
+                buffer.extend(["<front>", front_matter, "</front>", ""])
         else:
             if "prev_titles" in section:
                 buffer.extend(
