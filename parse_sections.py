@@ -91,12 +91,13 @@ def parse_sections(text):
 
 
 def markup_sections(sections):
-    buffer = []
+    buffer = ["<body>"]
     for section in sections:
         if section["numeral"] is None:
             front_matter = "\n".join(section["lines"]).strip()
             if front_matter:
-                buffer.extend(["<front>", front_matter, "</front>", ""])
+                # <front/> section should be prepended so it goes before <body/>
+                buffer = ["<front>", front_matter, "</front>", ""] + buffer
         else:
             if "prev_titles" in section:
                 buffer.extend(
@@ -110,6 +111,7 @@ def markup_sections(sections):
                 for line in section["lines"]
             )
             buffer.append("</div>\n")
+    buffer.append("</body>")
     return "\n".join(buffer)
 
 
