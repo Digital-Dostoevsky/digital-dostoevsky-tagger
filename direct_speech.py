@@ -1,30 +1,61 @@
 import re
 
 
-def markup_direct_speech(text):
+def markup_direct_speech(text: str) -> str:
+    """
+    Markup direct speech in the given text with <said/> tags.
+    See tests/test_direct_speech.py for examples.
+    """
 
+    # punctuation which can terminate an utterance (or part thereof)
+    p = "?!).»"
+
+    # designate two unicode "noncharacters" for use as temporary markers
+    tag_open = "\uFFFE"
+    tag_close = "\uFFFF"
+
+    # first pass for direct speech offset by an emdash
     text = re.sub(
-        r"""
-            (?<!»\s)        # ignore emdashes which follow chevrons
-            —\s             # the emdash and whitespace (normalizing to a single space)
-            ([^—\n]+)       # everything up to another emdash or the end of the line
-            (\s*)           # any trainling whitespace which may precede a second emdash
+        rf"""
+          (?<![,{p}]\s)    # discount emdashes which follow terminating punctuation
+          —\s*             # the emdash and any whitespace
+          (.+?)            # lazily capture everything up to...
+          (?=[,{p}]\s—|$)  # emdash preceded by a comma, terminating punctuation, or EOL
+          ([{p}])?         # capture trailing terminating punctuation for inclusion
         """,
-        r"— <said>\g<1></said>\g<2>",
+        # any whitespace folling the emdash is normalized to a single space
+        rf"— {tag_open}\g<1>\g<2>{tag_close}",
         text,
         flags=re.VERBOSE,
     )
 
-    # replace bounding chevrons with <said> tags
-    text = re.sub(r"«[^»]+»", r"<said>\g<0></said>", text)
+    # second pass for utterances that resume after an inquit that terminates with a comma
+    text = re.sub(
+        rf"""
+          (?<!{tag_close}) # discount anything which has already been marked for tagging
+          ,\s*—\s*
+          (?!{tag_open})   # discount emdashes which follow terminating punctuation
+          (.+?)            # lazily capture everything up to...
+          (?=[,{p}]\s—|$)  # emdash preceded by a comma, terminating punctuation, or EOL
+          ([{p}])?         # capture trailing terminating punctuation for inclusion
+        """,
+        # any whitespace folling the comma and emdash are normalized to a single space
+        rf", — {tag_open}\g<1>\g<2>{tag_close}",
+        text,
+        flags=re.VERBOSE,
+    )
 
-    # move trainling commas and whitespace outside of utterances
-    text = re.sub(r"([\s,]+)</said>", r"</said>\g<1>", text)
+    # replace bounding guillemets with <said> tags
+    text = re.sub(r"«[^»]+»", rf"{tag_open}\g<0>{tag_close}", text)
 
+    # replace temporary markers with <said> tags
+    text = text.replace(tag_open, "<said>")
+    text = text.replace(tag_close, "</said>")
     return text
 
 
 if __name__ == "__main__":
+    # The following code is used for testing and development purposes only.
     import sys
 
     with open(sys.argv[1], "rt") as _fh:
