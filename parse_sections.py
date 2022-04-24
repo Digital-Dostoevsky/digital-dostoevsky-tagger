@@ -67,17 +67,18 @@ def parse_sections(text):
                     if current.strip() and previous.strip():
                         break
 
+                prev_titles.reverse()
+
                 if first_section:
                     first_section = False
                     section["title"], section["subtitle"], *prev_titles = prev_titles
                     has_maintitle = len(prev_titles) == 3
 
                 if not has_maintitle:
-                    titles = reversed(TITLES[:-1])
+                    titles = TITLES[:-1]
 
-                section["prev_titles"] = reversed(
-                    dict(zip(titles, prev_titles)).items()
-                )
+                section["prev_titles"] = dict(zip(titles, prev_titles)).items()
+
             else:
                 # sanity check -- consecutive roman numeral sections should have
                 #  consecutive roman numerals (unless they are section I)
