@@ -104,13 +104,13 @@ def markup_sections(sections):
                     [f"<{key}>{val}</{key}>" for key, val in section["prev_titles"]]
                 )
             integer = roman_to_arabic(section["numeral"])
-            buffer.append(f'<div type="section" n="{integer}">')
+            buffer.append(f'<div3 type="section" n="{integer}">')
             buffer.append(f"<head>{section['numeral']}</head>")
             buffer.extend(
                 f"<p>{line.strip()}</p>" if line.strip() else ""
                 for line in section["lines"]
             )
-            buffer.append("</div>\n")
+            buffer.append("</div3>\n")
     buffer.append("</body>")
     return "\n".join(buffer)
 
