@@ -2,7 +2,6 @@ import pytest
 
 from tagger.direct_speech import markup_direct_speech
 
-
 examples = [
     # guillemets
     ("«Поди узнай, кто это»", "<said>«Поди узнай, кто это»</said>"),
@@ -72,6 +71,6 @@ examples = [
 ]
 
 
-@pytest.mark.parametrize("source,expected", examples, ids=lambda v: f"{v=}")
+@pytest.mark.parametrize("source,expected", examples, ids=lambda v: v[:20])
 def test_direct_speech(source, expected):
     assert markup_direct_speech(source) == expected
