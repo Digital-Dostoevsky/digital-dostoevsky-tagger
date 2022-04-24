@@ -1,6 +1,6 @@
 import logging
 
-TITLES = ["title", "subtitle", "part_title", "chapter_title", "maintitle"]
+TITLES = ["part_title", "chapter_title", "maintitle"]
 
 
 def is_roman_numeral(text):
@@ -69,7 +69,8 @@ def parse_sections(text):
 
                 if first_section:
                     first_section = False
-                    has_maintitle = len(prev_titles) == 5
+                    section["title"], section["subtitle"], *prev_titles = prev_titles
+                    has_maintitle = len(prev_titles) == 3
 
                 if not has_maintitle:
                     titles = reversed(TITLES[:-1])
@@ -99,10 +100,16 @@ def markup_sections(sections):
                 # <front/> section should be prepended so it goes before <body/>
                 buffer = ["<front>", front_matter, "</front>", ""] + buffer
         else:
+            if "title" in section:
+                buffer.append(f'<head type="mainTitle">{section["title"]}</head>')
+            if "subtitle" in section:
+                buffer.append(f'<head type="subTitle">{section["subtitle"]}</head>')
+
             if "prev_titles" in section:
                 buffer.extend(
                     [f"<{key}>{val}</{key}>" for key, val in section["prev_titles"]]
                 )
+
             integer = roman_to_arabic(section["numeral"])
             buffer.append(f'<div3 type="section" n="{integer}">')
             buffer.append(f"<head>{section['numeral']}</head>")
