@@ -1,7 +1,5 @@
 import logging
 
-TITLES = ["part_title", "chapter_title", "maintitle"]
-
 
 def is_roman_numeral(text):
     if not text:
@@ -25,6 +23,9 @@ def roman_to_arabic(s: str) -> int:
 
 
 def parse_sections(text):
+
+    titles = ["div1", "div2", "maintitle"]
+
     sections = []
     buffer = []
     first_section = True
@@ -48,7 +49,6 @@ def parse_sections(text):
 
             if integer == 1:
                 prev_titles = []
-                titles = iter(reversed(TITLES))
 
                 # iterate lines from the previous section
                 #  - bottom up, two at a time
@@ -75,7 +75,7 @@ def parse_sections(text):
                     has_maintitle = len(prev_titles) == 3
 
                 if not has_maintitle:
-                    titles = TITLES[:-1]
+                    titles = titles[:-1]
 
                 section["prev_titles"] = dict(zip(titles, prev_titles)).items()
 
