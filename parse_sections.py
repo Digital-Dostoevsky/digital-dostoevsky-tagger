@@ -93,7 +93,10 @@ def parse_sections(text):
 
 
 def markup_sections(sections):
+
+    closing = []
     buffer = ["<body>"]
+
     for section in sections:
         if section["numeral"] is None:
             front_matter = "\n".join(section["lines"]).strip()
@@ -107,8 +110,16 @@ def markup_sections(sections):
                 buffer.append(f'<head type="subTitle">{section["subtitle"]}</head>')
 
             if "prev_titles" in section:
+                if closing:
+                    buffer.extend(closing)
+
+                closing = [f"</{key}>" for key, val in reversed(section["prev_titles"])]
+
                 buffer.extend(
-                    [f"<{key}>{val}</{key}>" for key, val in section["prev_titles"]]
+                    [
+                        f"<{key}><head>{val}</head>"
+                        for key, val in section["prev_titles"]
+                    ]
                 )
 
             integer = roman_to_arabic(section["numeral"])
@@ -119,6 +130,9 @@ def markup_sections(sections):
                 for line in section["lines"]
             )
             buffer.append("</div3>\n")
+
+    if closing:
+        buffer.extend(closing)
     buffer.append("</body>")
     return "\n".join(buffer)
 
