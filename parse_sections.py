@@ -127,7 +127,12 @@ def markup_sections(sections):
 
             chapter_title = section.get("prev_titles", {}).pop("chapter_title", None)
             if "prev_titles" in section:
+                if first_section:
+                    has_chapters = len(section["prev_titles"]) > 1
+
                 if not first_section:
+                    if not has_chapters:
+                        buffer.append("</div2>\n")
                     buffer.extend(
                         [f"</{key}>" for key in reversed(section["prev_titles"])]
                     )
@@ -143,6 +148,10 @@ def markup_sections(sections):
                         for key, val in section["prev_titles"].items()
                     ]
                 )
+
+                if not has_chapters:
+                    buffer.append("<div2>\n")
+
                 if chapter_title is not None:
                     buffer.append(f'<head type="mainTitle">{chapter_title}</head>')
 
