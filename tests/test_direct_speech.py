@@ -1,6 +1,6 @@
 import pytest
 
-from tagger.direct_speech import markup_direct_speech
+from tagger.direct_speech import markup_direct_speech, ATTRIBS
 
 examples = [
     # guillemets
@@ -78,4 +78,7 @@ examples = [
 
 @pytest.mark.parametrize("source,expected", examples, ids=lambda v: v[:20])
 def test_direct_speech(source, expected):
+    expected = expected.replace(
+        "<said>", "<said {}>".format(" ".join(f'{k}=""' for k in ATTRIBS))
+    )
     assert markup_direct_speech(source) == expected
