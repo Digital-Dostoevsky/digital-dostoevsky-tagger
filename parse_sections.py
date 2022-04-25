@@ -156,9 +156,10 @@ def markup_sections(sections):
 
 
 if __name__ == "__main__":
+    # The following code is used for testing and development purposes only.
+    import sys
 
-    # with open("../Digital-Dostoevsky-corpus/Бесы - Proofed.txt", "rt") as _fh:
-    with open("../Digital-Dostoevsky-corpus/Подросток.txt", "rt") as _fh:
+    with open(sys.argv[1], "rt") as _fh:
         text = _fh.read()
 
     sections = parse_sections(text)
