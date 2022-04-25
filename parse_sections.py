@@ -68,9 +68,14 @@ def parse_sections(text):
 
                 if first_section:
                     first_section = False
-                    section["title"], section["subtitle"], *prev_titles = reversed(
-                        prev_titles
-                    )
+                    prev_titles.reverse()
+                    # must have a top-level title
+                    section["title"] = prev_titles.pop(0)
+
+                    # DUBIOUS: if there's more than one title left, take a subtitle
+                    if len(prev_titles) > 1:
+                        section["subtitle"], *prev_titles = prev_titles
+
                     prev_titles.reverse()
 
                     titles = titles[: len(prev_titles)]
