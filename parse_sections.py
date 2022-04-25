@@ -28,7 +28,7 @@ def parse_sections(text):
     first_section = True
 
     sections = []
-    buffer = []
+    buffer = [""]  # ensure an empty line at the top of the document
 
     section_numeral = None
     for i, line in enumerate(text.splitlines()):
