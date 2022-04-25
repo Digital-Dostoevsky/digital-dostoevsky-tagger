@@ -1,5 +1,7 @@
 import re
 
+ATTRIBS = ["aloud", "direct", "who", "toWhom"]
+
 
 def markup_direct_speech(text: str) -> str:
     """
@@ -47,6 +49,10 @@ def markup_direct_speech(text: str) -> str:
 
     # replace bounding guillemets with <said> tags
     text = re.sub(r"«[^»\n]+»", rf"{tag_open}\g<0>{tag_close}", text)
+
+    text = text.replace(
+        tag_open, "<said {}>".format(" ".join(f'{k}=""' for k in ATTRIBS))
+    )
 
     # replace temporary markers with <said> tags
     text = text.replace(tag_open, "<said>")
