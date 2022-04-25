@@ -1,68 +1,11 @@
 import re
 
 
-person_names = [
-    #
-    "Аполлон",
-    "Aполлона",
-    "Аполлону",
-    #
-    "Зверков",
-    "Зверкова",
-    "Зверкову",
-    "Зверковым",
-    #
-    "Лиза",
-    "Лизу",
-    "Лизе",
-    "Лизой",
-    #
-    "Антон Антонович Сеточкин",
-    "Антона Антоновича Сеточкина",
-    "Антона Антоныча",
-    "Антон Антонович",
-    "Антону Антонычу Сеточкину",
-    "Антону Антонычу",
-    "Антона Антоновича",
-    #
-    "Симонов",
-    "Симонова",
-    "Симонове",
-    "Симонову",
-    #
-    "Трудолюбов",
-    "Трудолюбовым",
-    #
-    "Ферфичкин",
-    "Ферфичкину",
-    #
-    "Господа",
-    "господа",
-]
+def markup_proper_names(text, names, tag):
 
-place_names = [
-    #
-    "Петербург",
-    "Петербурге",
-    "Петербурга",
-    #
-    "хрустальный дворец",
-    "хрустальном дворце",
-    #
-    "дворец",
-    "дворца",
-    #
-    "курятник",
-    "курятника",
-]
-
-
-def markup_proper_names(text):
-
-    re_person_names = re.compile(rf"\b(?:{'|'.join(person_names)})\b")
-    re_place_names = re.compile(rf"\b(?:{'|'.join(place_names)})\b")
-
-    text = re_person_names.sub(r"<persName>\g<0></persName>", text)
-    text = re_place_names.sub(r"<placeName>\g<0></placeName>", text)
+    re_proper_names = re.compile(
+        rf"\b(?:{'|'.join(sorted(names, key=len, reverse=True))})\b"
+    )
+    text = re_proper_names.sub(rf"<{tag}>\g<0></{tag}>", text)
 
     return text
