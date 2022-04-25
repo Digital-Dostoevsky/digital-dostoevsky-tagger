@@ -100,6 +100,17 @@ def markup_sections(sections):
 
     closing = []
     buffer = ["<body>"]
+    section_attribs = {
+        "div1": {"type": "part", "n": 0},
+        "div2": {"type": "chapter", "n": 0},
+    }
+
+    def get_section_markup(section_type, heading_text):
+        section_attribs[section_type]["n"] += 1
+        attribs = " ".join(
+            f'{k}="{v}"' for k, v in section_attribs[section_type].items()
+        )
+        return f"<{section_type} {attribs}><head>{heading_text}</head>"
 
     for section in sections:
         if section["numeral"] is None:
@@ -117,11 +128,14 @@ def markup_sections(sections):
                 if closing:
                     buffer.extend(closing)
 
-                closing = [f"</{key}>" for key, val in reversed(section["prev_titles"])]
+                closing = [f"</{key}>" for key, _ in reversed(section["prev_titles"])]
+
+                if "div1" in section["prev_titles"]:
+                    section_attribs["div2"]["n"] = 0
 
                 buffer.extend(
                     [
-                        f"<{key}><head>{val}</head>"
+                        get_section_markup(key, val)
                         for key, val in section["prev_titles"]
                     ]
                 )
