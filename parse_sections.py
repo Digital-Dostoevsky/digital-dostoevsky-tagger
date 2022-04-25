@@ -24,12 +24,11 @@ def roman_to_arabic(s: str) -> int:
 
 def parse_sections(text):
 
-    titles = ["div1", "div2", "maintitle"]
+    titles = ["div1", "div2", "chapter_title"]
+    first_section = True
 
     sections = []
     buffer = []
-    first_section = True
-    has_maintitle = True
 
     section_numeral = None
     for i, line in enumerate(text.splitlines()):
@@ -72,16 +71,13 @@ def parse_sections(text):
                     section["title"], section["subtitle"], *prev_titles = reversed(
                         prev_titles
                     )
-                    has_maintitle = len(prev_titles) == 3
+                    prev_titles.reverse()
 
-                    if not has_maintitle:
-                        titles = titles[:-1]
+                    titles = titles[: len(prev_titles)]
 
                     titles.reverse()
 
-                section["prev_titles"] = list(
-                    reversed(dict(zip(titles, prev_titles)).items())
-                )
+                section["prev_titles"] = dict(reversed(list(zip(titles, prev_titles))))
 
             else:
                 # sanity check -- consecutive roman numeral sections should have
@@ -98,7 +94,7 @@ def parse_sections(text):
 
 def markup_sections(sections):
 
-    closing = []
+    first_section = True
     buffer = ["<body>"]
     section_attribs = {
         "div1": {"type": "part", "n": 0},
@@ -124,21 +120,26 @@ def markup_sections(sections):
             if "subtitle" in section:
                 buffer.append(f'<head type="subTitle">{section["subtitle"]}</head>')
 
+            chapter_title = section.get("prev_titles", {}).pop("chapter_title", None)
             if "prev_titles" in section:
-                if closing:
-                    buffer.extend(closing)
-
-                closing = [f"</{key}>" for key, _ in reversed(section["prev_titles"])]
+                if not first_section:
+                    buffer.extend(
+                        [f"</{key}>" for key in reversed(section["prev_titles"])]
+                    )
+                first_section = False
 
                 if "div1" in section["prev_titles"]:
+                    # restart chapter-level numbering
                     section_attribs["div2"]["n"] = 0
 
                 buffer.extend(
                     [
                         get_section_markup(key, val)
-                        for key, val in section["prev_titles"]
+                        for key, val in section["prev_titles"].items()
                     ]
                 )
+                if chapter_title is not None:
+                    buffer.append(f'<head type="mainTitle">{chapter_title}</head>')
 
             integer = roman_to_arabic(section["numeral"])
             buffer.append(f'<div3 type="section" n="{integer}">')
@@ -149,8 +150,8 @@ def markup_sections(sections):
             )
             buffer.append("</div3>\n")
 
-    if closing:
-        buffer.extend(closing)
+    buffer.append("</div2>\n")
+    buffer.append("</div1>\n")
     buffer.append("</body>")
     return "\n".join(buffer)
 
