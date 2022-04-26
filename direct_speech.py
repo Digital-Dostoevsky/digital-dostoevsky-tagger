@@ -19,11 +19,11 @@ def markup_direct_speech(text: str) -> str:
     # first pass for direct speech offset by an emdash
     text = re.sub(
         rf"""
-          (?<![,{p}]\s)    # discount emdashes which follow terminating punctuation
-          —\s*             # the emdash and any whitespace
-          (.+?)            # lazily capture everything up to...
-          (?=[,{p}]\s—|\n|$)  # emdash preceded by a comma, terminating punctuation, or EOL
-          ([{p}])?         # capture trailing terminating punctuation for inclusion
+          (?<![,{p}]\s)       # discount emdashes which follow terminating punctuation
+          —\s*                # the emdash and any whitespace
+          (.+?)               # lazily capture everything up to...
+          (?=[,{p}]\s—|\n|$)  # emdash preceded by a comma, terminating punct., or EOL
+          ([{p}])?            # capture trailing terminating punctuation for inclusion
         """,
         # any whitespace folling the emdash is normalized to a single space
         rf"— {tag_open}\g<1>\g<2>{tag_close}",
@@ -35,14 +35,15 @@ def markup_direct_speech(text: str) -> str:
     #  comma or a period
     text = re.sub(
         rf"""
-          (?<!{tag_close}) # discount anything which has already been marked for tagging
-          ([,.])\s*—\s*
-          (?!{tag_open})   # discount emdashes which follow terminating punctuation
-          (.+?)            # lazily capture everything up to...
-          (?=[,{p}]\s—|\n|$)  # emdash preceded by a comma, terminating punctuation, or EOL
-          ([{p}])?         # capture trailing terminating punctuation for inclusion
+          (?<!{tag_close})    # discount anything already marked for tagging
+          ([,.])\s*           # capture a comma or period that terminates an inquit
+          —\s*                # the emdash and any whitespace
+          (?!{tag_open})      # discount emdashes which follow terminating punctuation
+          (.+?)               # lazily capture everything up to...
+          (?=[,{p}]\s—|\n|$)  # emdash preceded by a comma, terminating punct., or EOL
+          ([{p}])?            # capture trailing terminating punctuation for inclusion
         """,
-        # any whitespace folling the comma and emdash are normalized to a single space
+        # any whitespace following the comma and emdash are normalized to a single space
         rf"\g<1> — {tag_open}\g<2>\g<3>{tag_close}",
         text,
         flags=re.VERBOSE,
