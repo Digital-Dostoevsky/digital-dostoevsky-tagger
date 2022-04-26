@@ -31,18 +31,19 @@ def markup_direct_speech(text: str) -> str:
         flags=re.VERBOSE,
     )
 
-    # second pass for utterances that resume after an inquit that terminates with a comma
+    # second pass for utterances that resume after an inquit that terminates with a
+    #  comma or a period
     text = re.sub(
         rf"""
           (?<!{tag_close}) # discount anything which has already been marked for tagging
-          ,\s*—\s*
+          ([,.])\s*—\s*
           (?!{tag_open})   # discount emdashes which follow terminating punctuation
           (.+?)            # lazily capture everything up to...
           (?=[,{p}]\s—|$)  # emdash preceded by a comma, terminating punctuation, or EOL
           ([{p}])?         # capture trailing terminating punctuation for inclusion
         """,
         # any whitespace folling the comma and emdash are normalized to a single space
-        rf", — {tag_open}\g<1>\g<2>{tag_close}",
+        rf"\g<1> — {tag_open}\g<2>\g<3>{tag_close}",
         text,
         flags=re.VERBOSE,
     )
