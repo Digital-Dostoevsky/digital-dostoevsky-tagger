@@ -22,7 +22,7 @@ def markup_direct_speech(text: str) -> str:
           (?<![,{p}]\s)    # discount emdashes which follow terminating punctuation
           —\s*             # the emdash and any whitespace
           (.+?)            # lazily capture everything up to...
-          (?=[,{p}]\s—|$)  # emdash preceded by a comma, terminating punctuation, or EOL
+          (?=[,{p}]\s—|\n|$)  # emdash preceded by a comma, terminating punctuation, or EOL
           ([{p}])?         # capture trailing terminating punctuation for inclusion
         """,
         # any whitespace folling the emdash is normalized to a single space
@@ -39,7 +39,7 @@ def markup_direct_speech(text: str) -> str:
           ([,.])\s*—\s*
           (?!{tag_open})   # discount emdashes which follow terminating punctuation
           (.+?)            # lazily capture everything up to...
-          (?=[,{p}]\s—|$)  # emdash preceded by a comma, terminating punctuation, or EOL
+          (?=[,{p}]\s—|\n|$)  # emdash preceded by a comma, terminating punctuation, or EOL
           ([{p}])?         # capture trailing terminating punctuation for inclusion
         """,
         # any whitespace folling the comma and emdash are normalized to a single space
