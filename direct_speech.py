@@ -20,7 +20,7 @@ def markup_direct_speech(text: str) -> str:
     text = re.sub(
         rf"""
           (?<![,{p}]\s)       # discount emdashes which follow terminating punctuation
-          —\s*                # the emdash and any whitespace
+          —\s+                # the emdash and any whitespace
           (.+?)               # lazily capture everything up to...
           (?=[,{p}]\s—|\n|$)  # emdash preceded by a comma, terminating punct., or EOL
           ([{p}])?            # capture trailing terminating punctuation for inclusion
@@ -37,7 +37,7 @@ def markup_direct_speech(text: str) -> str:
         rf"""
           (?<!{tag_close})    # discount anything already marked for tagging
           ([,.])\s*           # capture a comma or period that terminates an inquit
-          —\s*                # the emdash and any whitespace
+          —\s+                # the emdash and any whitespace
           (?!{tag_open})      # discount emdashes which follow terminating punctuation
           (.+?)               # lazily capture everything up to...
           (?=[,{p}]\s—|\n|$)  # emdash preceded by a comma, terminating punct., or EOL
