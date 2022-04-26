@@ -118,7 +118,7 @@ def markup_sections(sections):
             front_matter = "\n".join(section["lines"]).strip()
             if front_matter:
                 # <front/> section should be prepended so it goes before <body/>
-                buffer = ["<front>", front_matter, "</front>", ""] + buffer
+                buffer = ["<front><p>", front_matter, "</p></front>", ""] + buffer
         else:
             if "title" in section:
                 buffer.append(f'<head type="mainTitle">{section["title"]}</head>')
