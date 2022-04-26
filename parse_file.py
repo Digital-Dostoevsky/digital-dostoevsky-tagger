@@ -60,6 +60,8 @@ def create_tei_structure(text):
 def format_tree(elem, indent="  ", level=0):
     """Pretty-prints and indents a tree beautifully."""
     i = "\n%s" % (level * indent)
+    if elem.tag == "{http://www.tei-c.org/ns/1.0}p":
+        return
     if len(elem):
         if not elem.text or not elem.text.strip():
             elem.text = "%s%s" % (i, indent)
