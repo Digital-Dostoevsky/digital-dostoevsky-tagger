@@ -3,6 +3,9 @@
 
 The modules in this repository can be used to parse raw text files from the corpus of the Digital Dostoevsky Project and applying basic TEI markup to them.
 
+
+## Functionality
+
 The markup applied is of three kinds:
 
 * **Structural**  
@@ -17,6 +20,10 @@ The markup applied is of three kinds:
 * **Proper Names**  
   Line-by-line lists for orthographic forms for person and place names can be supplied, and occurrences will be marked up with `<persName/>` and `<placeName/>` tags respectively.
 
+
+## Usage
+
+The modules and CLI require Python >= 3.8.  The only non-stdlib dependency is `lxml` (`pip install lxml`), so I've not bothered with a `requirements.txt` or a full `pipenv`/`poetry` set up.
 
 ```sh
 usage: parse_file.py [-h] [-v] [-q] [-o OUTPUT] [--rng-schema RNG_SCHEMA] [--person-names-list PERSON_NAMES_LIST] [--place-names-list PLACE_NAMES_LIST] input_text
@@ -39,3 +46,8 @@ options:
   --place-names-list PLACE_NAMES_LIST
                         Line-by-line list of place names (optional) 
 ```
+
+
+## Testing
+
+Tests are available for the direct speech module, in the form of [a bunch of examples with expected transformations](tests/test_direct_speech.py).  Run them using `pytest` (`pip install pytest`) from the project root.
