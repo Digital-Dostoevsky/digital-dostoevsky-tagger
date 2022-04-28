@@ -1,4 +1,5 @@
 import logging
+import re
 
 
 def is_roman_numeral(text):
@@ -94,6 +95,28 @@ def parse_sections(text):
                         f"\n\t - {section['lines'][1]}..."
                     )
 
+            # pick up section titles for roman-numeraled sections
+            # (Brothers Karamazov only)
+            for j, line in enumerate(section["lines"]):
+                # skip the first line, the last line, and empty lines
+                if j == 0 or j == len(section["lines"]) - 1 or not line.strip():
+                    continue
+
+                # if we have two conecutive lines with content, give up and move on
+                if section["lines"][j + 1].strip():
+                    break
+
+                # if we've got a line with blank lines on either side AND
+                #  where all the content is upper case, take it as a section title
+                if (
+                    not section["lines"][j - 1].strip()
+                    and not section["lines"][j + 1].strip()
+                    and re.sub("<[^<]+?>", "", line).upper()
+                    == re.sub("<[^<]+?>", "", line)
+                ):
+                    section["section_title"] = line.strip()
+                    break
+
     return sections
 
 
@@ -158,6 +181,8 @@ def markup_sections(sections):
             integer = roman_to_arabic(section["numeral"])
             buffer.append(f'<div3 type="section" n="{integer}">')
             buffer.append(f"<head>{section['numeral']}</head>")
+            if "section_title" in section:
+                buffer.append(f"<head>{section['section_title']}</head>")
             buffer.extend(
                 f"<p>{line.strip()}</p>" if line.strip() else ""
                 for line in section["lines"]
