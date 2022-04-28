@@ -62,6 +62,8 @@ def format_tree(elem, indent="  ", level=0):
     i = "\n%s" % (level * indent)
     if elem.tag == "{http://www.tei-c.org/ns/1.0}p":
         return
+    if elem.tag == "{http://www.tei-c.org/ns/1.0}head":
+        return
     if len(elem):
         if not elem.text or not elem.text.strip():
             elem.text = "%s%s" % (i, indent)
