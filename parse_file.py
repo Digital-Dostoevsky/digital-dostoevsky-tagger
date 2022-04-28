@@ -122,7 +122,7 @@ def main():
 
     logging.info("Processing input text: %s", args.input_text)
 
-    with Path(args.input_text).open("r") as _fh:
+    with Path(args.input_text).open("r", encoding="utf8") as _fh:
         text = _fh.read()
 
     text = markup_direct_speech(text)
