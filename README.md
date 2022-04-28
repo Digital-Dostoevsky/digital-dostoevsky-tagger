@@ -1,6 +1,9 @@
 
 # digital-dostoevsky-tagger
 
+![Python Version](https://img.shields.io/badge/python-3.8|3.9|3.10-blue?logo=python&logoColor=white)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 The modules in this repository can be used to parse raw text files from the corpus of the Digital Dostoevsky Project and applying basic TEI markup to them.
 
 
