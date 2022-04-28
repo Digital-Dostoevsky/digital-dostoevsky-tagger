@@ -119,3 +119,21 @@ def test_direct_speech(source, expected):
         "<said>", "<said {}>".format(" ".join(f'{k}=""' for k in ATTRIBS))
     )
     assert markup_direct_speech(source) == expected
+
+
+if __name__ == "__main__":
+    # Sometimes this is easier to develop against than using pytest properly...
+    # <TEI/> tags are for the sake of IDE linters and syntax highlighters.
+    print("<TEI>")
+    for source, expected in examples:
+        markedup = markup_direct_speech(source)
+        expected = expected.replace(
+            "<said>", "<said {}>".format(" ".join(f'{k}=""' for k in ATTRIBS))
+        )
+        if expected != markedup:
+            print(source)
+            print("=" * len(source))
+            print(expected)
+            print(markedup)
+            print("\n\n")
+    print("</TEI>")
