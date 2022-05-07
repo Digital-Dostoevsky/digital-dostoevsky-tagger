@@ -26,7 +26,7 @@ The markup applied is of three kinds:
 
 ## Usage
 
-The modules and CLI require Python >= 3.8.  The only non-stdlib dependency is `lxml` (`pip install lxml`), so I've not bothered with a `requirements.txt` or a full `pipenv`/`poetry` set up.
+The modules and CLI require Python >= 3.8.  The only non-stdlib dependencies are `lxml` and `regex` -- install them using `pip install -r requirements.txt` or similar.
 
 ```sh
 usage: parse_file.py [-h] [-v] [-q] [-o OUTPUT] [--rng-schema RNG_SCHEMA] [--person-names-list PERSON_NAMES_LIST] [--place-names-list PLACE_NAMES_LIST] input_text
