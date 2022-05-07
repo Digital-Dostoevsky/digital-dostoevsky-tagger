@@ -140,12 +140,12 @@ def main():
     sections = parse_sections(text)
     text = markup_sections(sections)
 
-    doc = etree.fromstring(create_tei_structure(text).encode("utf8"))
-    format_tree(doc)
-
     if args.output:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    doc = etree.fromstring(create_tei_structure(text).encode("utf8"))
+    format_tree(doc)
 
     logging.info("Writing processed text to: %s", args.output or "stdout")
 
@@ -159,7 +159,7 @@ def main():
         relaxng = etree.RelaxNG(relaxng_doc)
         if not relaxng.validate(doc):
             for entry in relaxng.error_log:
-                # Note: better validation errors are available with something link jing
+                # Note: better validation errors are available with something like jing
                 if (
                     entry.message == "Invalid attribute aloud for element said"
                     or entry.line in [15, 16]
