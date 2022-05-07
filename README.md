@@ -1,7 +1,7 @@
 
 # digital-dostoevsky-tagger
 
-![Python Version](https://img.shields.io/badge/python-3.8|3.9|3.10|3.11-blue?logo=python&logoColor=white)
+![Python Version](https://img.shields.io/badge/python-3.10|3.11-blue?logo=python&logoColor=white)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 The modules in this repository can be used to parse raw text files from the corpus of the Digital Dostoevsky Project and apply basic TEI markup to them.
@@ -26,7 +26,7 @@ The markup applied is of three kinds:
 
 ## Usage
 
-The modules and CLI require Python >= 3.8.  The only non-stdlib dependencies are `lxml` and `regex` -- install them using `pip install -r requirements.txt` or similar.
+The modules and CLI require Python >= 3.10.  The only non-stdlib dependencies are `lxml` and `regex` -- install them using `pip install -r requirements.txt` or similar.
 
 ```sh
 usage: parse_file.py [-h] [-v] [-q] [-o OUTPUT] [--rng-schema RNG_SCHEMA] [--person-names-list PERSON_NAMES_LIST] [--place-names-list PLACE_NAMES_LIST] input_text
