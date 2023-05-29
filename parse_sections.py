@@ -24,7 +24,6 @@ def roman_to_arabic(s: str) -> int:
 
 
 def parse_sections(text):
-
     titles = ["div1", "div2", "chapter_title"]
     first_section = True
 
@@ -40,10 +39,10 @@ def parse_sections(text):
             buffer = []
         else:
             buffer.append(line)
+    sections.append({"numeral": section_numeral, "lines": buffer})
 
     for i, section in enumerate(sections):
         if section["numeral"] is not None:
-
             prev_section = sections[i - 1]
             integer = roman_to_arabic(section["numeral"])
 
@@ -121,7 +120,6 @@ def parse_sections(text):
 
 
 def markup_sections(sections):
-
     first_section = True
     buffer = ["<body>"]
     section_attribs = {
