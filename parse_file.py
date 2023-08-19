@@ -28,7 +28,7 @@ XML_PROCESSING_INSTRUCTIONS = [
 ]
 
 
-def create_tei_structure(text):
+def create_tei_structure(text: str) -> str:
     """Create TEI structure for the given text."""
 
     return f"""\
@@ -57,7 +57,7 @@ def create_tei_structure(text):
 """
 
 
-def format_tree(elem, indent="  ", level=0):
+def format_tree(elem: etree._Element, indent: str = "  ", level: int = 0) -> None:
     """Pretty-prints and indents a tree beautifully."""
     i = "\n%s" % (level * indent)
     if elem.tag == "{http://www.tei-c.org/ns/1.0}p":
@@ -77,7 +77,7 @@ def format_tree(elem, indent="  ", level=0):
             elem.tail = i
 
 
-def main():
+def main() -> None:
     """Command-line entry-point."""
 
     parser = argparse.ArgumentParser(description="Description: {}".format(__doc__))
@@ -140,6 +140,7 @@ def main():
     sections = parse_sections(text)
     text = markup_sections(sections)
 
+    output_path = None
     if args.output:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -149,7 +150,7 @@ def main():
 
     logging.info("Writing processed text to: %s", args.output or "stdout")
 
-    with output_path.open("wt", encoding="utf8") if args.output else sys.stdout as _fh:
+    with output_path.open("wt", encoding="utf8") if output_path else sys.stdout as _fh:
         _fh.write("\n".join(XML_PROCESSING_INSTRUCTIONS) + "\n")
         _fh.write(etree.tostring(doc, pretty_print=True, encoding="unicode"))
 

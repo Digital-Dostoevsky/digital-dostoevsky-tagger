@@ -1,14 +1,31 @@
 import logging
 import re
+from typing_extensions import NotRequired, TypedDict
+
+Section = TypedDict(
+    "Section",
+    {
+        "numeral": str | None,
+        "lines": list[str],
+        "title": NotRequired[str],
+        "subtitle": NotRequired[str],
+        "prev_titles": NotRequired[dict[str, str]],
+        "section_title": NotRequired[str],
+    },
+)
+
+SectionAttribs = TypedDict("SectionAttribs", {"type": str, "n": int})
 
 
-def is_roman_numeral(text):
+def is_roman_numeral(text: str) -> bool:
     if not text:
         return False
     return all([c in "IVX" for c in text])
 
 
-def roman_to_arabic(s: str) -> int:
+def roman_to_arabic(s: str | None) -> int:
+    if s is None:
+        return -1
     s = s.upper()
     roman = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
     num = 0
@@ -23,15 +40,15 @@ def roman_to_arabic(s: str) -> int:
     return num
 
 
-def parse_sections(text):
+def parse_sections(text: str) -> list[Section]:
     titles = ["div1", "div2", "chapter_title"]
     first_section = True
 
-    sections = []
+    sections: list[Section] = []
     buffer = [""]  # ensure an empty line at the top of the document
 
     section_numeral = None
-    for i, line in enumerate(text.splitlines()):
+    for line in text.splitlines():
         line = line.strip(" \t\n")
         if is_roman_numeral(line):
             sections.append({"numeral": section_numeral, "lines": buffer})
@@ -41,13 +58,14 @@ def parse_sections(text):
             buffer.append(line)
     sections.append({"numeral": section_numeral, "lines": buffer})
 
+    section: Section
     for i, section in enumerate(sections):
         if section["numeral"] is not None:
-            prev_section = sections[i - 1]
+            prev_section: Section = sections[i - 1]
             integer = roman_to_arabic(section["numeral"])
 
             if integer == 1:
-                prev_titles = []
+                prev_titles: list[str] = []
 
                 # iterate lines from the previous section
                 #  - bottom up, two at a time
@@ -119,15 +137,16 @@ def parse_sections(text):
     return sections
 
 
-def markup_sections(sections):
+def markup_sections(sections: list[Section]) -> str:
     first_section = True
+    has_chapters = False
     buffer = ["<body>"]
-    section_attribs = {
+    section_attribs: dict[str, SectionAttribs] = {
         "div1": {"type": "part", "n": 0},
         "div2": {"type": "chapter", "n": 0},
     }
 
-    def get_section_markup(section_type, heading_text):
+    def get_section_markup(section_type: str, heading_text: str) -> str:
         section_attribs[section_type]["n"] += 1
         attribs = " ".join(
             f'{k}="{v}"' for k, v in section_attribs[section_type].items()
@@ -197,7 +216,7 @@ if __name__ == "__main__":
     # The following code is used for testing and development purposes only.
     import sys
 
-    with open(sys.argv[1], "rt") as _fh:
+    with open(sys.argv[1], "rt", encoding="utf8") as _fh:
         text = _fh.read()
 
     sections = parse_sections(text)
